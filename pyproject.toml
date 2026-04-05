@@ -1,0 +1,21 @@
+[project]
+name = "text-embedding-service"
+version = "0.1.0"
+description = "Tiny FastAPI service for text-embedding model inference"
+readme = "README.md"
+requires-python = ">=3.13, <3.14"
+dependencies = [
+    "fastapi[standard]>=0.135.3",
+    "torch>=2.11.0",
+    "transformers>=5.5.0",
+]
+license = {text = "MIT"}
+authors = [{name = "Matvey Ivchenko", email = "matvey.ivchenko@yandex.ru"}]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
