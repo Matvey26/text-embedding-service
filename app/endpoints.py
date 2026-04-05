@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
@@ -43,8 +44,8 @@ async def get_embeddings(data: InputData, request: Request):
 
     prefixed_text = f"{data.prefix}: {data.text}"
 
-    tokenized_inputs = tokenize(
-        prefixed_text, request.app.state.tokenizer, truncation=False
+    tokenized_inputs = await asyncio.to_thread(
+        tokenize, prefixed_text, request.app.state.tokenizer, truncation=False
     )
     token_count = tokenized_inputs["input_ids"].shape[1]
 
@@ -69,7 +70,9 @@ async def get_embeddings(data: InputData, request: Request):
     tokenized_inputs["input_ids"] = tokenized_inputs["input_ids"][:, :512]
     tokenized_inputs["attention_mask"] = tokenized_inputs["attention_mask"][:, :512]
 
-    embeddings = predict(tokenized_inputs, request.app.state.model)
+    embeddings = await asyncio.to_thread(
+        predict, tokenized_inputs, request.app.state.model
+    )
 
     response = {
         "embedding": embeddings[0],
@@ -93,8 +96,10 @@ async def health_check(request: Request):
 
     try:
         test_text = "ok"
-        tokenized = tokenize(test_text, request.app.state.tokenizer)
-        emb = predict(tokenized, request.app.state.model)
+        tokenized = await asyncio.to_thread(
+            tokenize, test_text, request.app.state.tokenizer
+        )
+        emb = await asyncio.to_thread(predict, tokenized, request.app.state.model)
 
         if emb and len(emb[0]) > 0:
             return {
