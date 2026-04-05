@@ -2,7 +2,7 @@ import asyncio
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
-from model import tokenize, predict
+from app.model import tokenize, predict
 
 
 class InputData(BaseModel):
