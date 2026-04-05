@@ -1,8 +1,8 @@
 import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from model import init
-from endpoints import router as endpoints_router
+from app.model import init
+from app.endpoints import router as endpoints_router
 
 
 @asynccontextmanager
